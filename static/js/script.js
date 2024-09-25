@@ -57,6 +57,14 @@ document.addEventListener('DOMContentLoaded', () => {
         modalImage.src = wallpaper.s || wallpaper.wfs;
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden'; // Prevent scrolling on the background
+        updateDownloadButtons();
+    }
+
+    function updateDownloadButtons() {
+        downloadHD.disabled = !currentWallpaper.dhd;
+        downloadSD.disabled = !currentWallpaper.dsd;
+        downloadHD.classList.toggle('opacity-50', !currentWallpaper.dhd);
+        downloadSD.classList.toggle('opacity-50', !currentWallpaper.dsd);
     }
 
     closeModal.addEventListener('click', () => {
@@ -64,15 +72,52 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = ''; // Re-enable scrolling on the background
     });
 
+    function startDownload(url) {
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = '';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    function showLoadingIndicator(button) {
+        const originalText = button.textContent;
+        button.innerHTML = '<span class="animate-spin inline-block mr-2">↻</span> Downloading...';
+        button.disabled = true;
+        return () => {
+            button.innerHTML = originalText;
+            button.disabled = false;
+        };
+    }
+
     downloadHD.addEventListener('click', () => {
         if (currentWallpaper && currentWallpaper.dhd) {
-            window.open(currentWallpaper.dhd, '_blank');
+            const resetLoading = showLoadingIndicator(downloadHD);
+            fetch(currentWallpaper.dhd)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    startDownload(url);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error downloading HD wallpaper:', error))
+                .finally(resetLoading);
         }
     });
 
     downloadSD.addEventListener('click', () => {
         if (currentWallpaper && currentWallpaper.dsd) {
-            window.open(currentWallpaper.dsd, '_blank');
+            const resetLoading = showLoadingIndicator(downloadSD);
+            fetch(currentWallpaper.dsd)
+                .then(response => response.blob())
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    startDownload(url);
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error downloading SD wallpaper:', error))
+                .finally(resetLoading);
         }
     });
 
