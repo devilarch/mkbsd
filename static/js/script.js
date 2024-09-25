@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentWallpaper = wallpaper;
         modalImage.src = wallpaper.s || wallpaper.wfs;
         modal.classList.remove('hidden');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling on the background
+        document.body.style.overflow = 'hidden';
         updateDownloadButtons();
     }
 
@@ -69,13 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     closeModal.addEventListener('click', () => {
         modal.classList.add('hidden');
-        document.body.style.overflow = ''; // Re-enable scrolling on the background
+        document.body.style.overflow = '';
     });
 
-    function startDownload(url) {
+    function startDownload(url, filename) {
         const a = document.createElement('a');
         a.href = url;
-        a.download = '';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function showLoadingIndicator(button) {
         const originalText = button.textContent;
-        button.innerHTML = '<span class="animate-spin inline-block mr-2">↻</span> Downloading...';
+        button.innerHTML = '<svg class="animate-spin h-5 w-5 mr-3 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Downloading...';
         button.disabled = true;
         return () => {
             button.innerHTML = originalText;
@@ -91,34 +91,47 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    downloadHD.addEventListener('click', () => {
-        if (currentWallpaper && currentWallpaper.dhd) {
-            const resetLoading = showLoadingIndicator(downloadHD);
-            fetch(currentWallpaper.dhd)
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    startDownload(url);
-                    window.URL.revokeObjectURL(url);
+    function showMessage(message, isError = false) {
+        const messageElement = document.createElement('div');
+        messageElement.textContent = message;
+        messageElement.className = `fixed bottom-4 right-4 p-4 rounded-lg ${isError ? 'bg-red-500' : 'bg-green-500'} text-white`;
+        document.body.appendChild(messageElement);
+        setTimeout(() => {
+            messageElement.remove();
+        }, 3000);
+    }
+
+    function handleDownload(url, quality) {
+        if (url) {
+            const resetLoading = showLoadingIndicator(quality === 'HD' ? downloadHD : downloadSD);
+            fetch(url)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.blob();
                 })
-                .catch(error => console.error('Error downloading HD wallpaper:', error))
+                .then(blob => {
+                    const filename = `wallpaper_${quality}.jpg`;
+                    const url = window.URL.createObjectURL(blob);
+                    startDownload(url, filename);
+                    window.URL.revokeObjectURL(url);
+                    showMessage(`${quality} wallpaper downloaded successfully!`);
+                })
+                .catch(error => {
+                    console.error(`Error downloading ${quality} wallpaper:`, error);
+                    showMessage(`Failed to download ${quality} wallpaper. Please try again.`, true);
+                })
                 .finally(resetLoading);
         }
+    }
+
+    downloadHD.addEventListener('click', () => {
+        handleDownload(currentWallpaper.dhd, 'HD');
     });
 
     downloadSD.addEventListener('click', () => {
-        if (currentWallpaper && currentWallpaper.dsd) {
-            const resetLoading = showLoadingIndicator(downloadSD);
-            fetch(currentWallpaper.dsd)
-                .then(response => response.blob())
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    startDownload(url);
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => console.error('Error downloading SD wallpaper:', error))
-                .finally(resetLoading);
-        }
+        handleDownload(currentWallpaper.dsd, 'SD');
     });
 
     searchInput.addEventListener('input', (e) => {
