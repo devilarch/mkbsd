@@ -8,18 +8,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
 
     let currentWallpaper = null;
+    let currentPage = 1;
+    let totalPages = 1;
+    let isLoading = false;
+    let searchQuery = '';
 
-    function fetchWallpapers(searchQuery = '') {
-        axios.get(`/api/wallpapers?search=${searchQuery}`)
+    function fetchWallpapers(page = 1, append = false) {
+        if (isLoading) return;
+        isLoading = true;
+
+        axios.get(`/api/wallpapers?search=${searchQuery}&page=${page}`)
             .then(response => {
                 const wallpapers = response.data.data;
-                displayWallpapers(wallpapers);
+                totalPages = response.data.total_pages;
+                currentPage = response.data.current_page;
+
+                if (append) {
+                    displayWallpapers(wallpapers, true);
+                } else {
+                    displayWallpapers(wallpapers, false);
+                }
+                isLoading = false;
             })
-            .catch(error => console.error('Error fetching wallpapers:', error));
+            .catch(error => {
+                console.error('Error fetching wallpapers:', error);
+                isLoading = false;
+            });
     }
 
-    function displayWallpapers(wallpapers) {
-        wallpaperGrid.innerHTML = '';
+    function displayWallpapers(wallpapers, append = false) {
+        if (!append) {
+            wallpaperGrid.innerHTML = '';
+        }
+
         Object.entries(wallpapers).forEach(([id, wallpaper]) => {
             const wallpaperItem = document.createElement('div');
             wallpaperItem.className = 'wallpaper-item cursor-pointer';
@@ -54,8 +75,19 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     searchInput.addEventListener('input', (e) => {
-        const searchQuery = e.target.value.trim();
-        fetchWallpapers(searchQuery);
+        searchQuery = e.target.value.trim();
+        currentPage = 1;
+        fetchWallpapers(currentPage);
+    });
+
+    // Infinite scroll
+    window.addEventListener('scroll', () => {
+        if (isLoading || currentPage >= totalPages) return;
+
+        const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+        if (scrollTop + clientHeight >= scrollHeight - 5) {
+            fetchWallpapers(currentPage + 1, true);
+        }
     });
 
     // Initial wallpaper fetch
