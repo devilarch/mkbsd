@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body class="bg-black text-white">
-    <header class="container mx-auto py-8">
+    <header class="container mx-auto py-8 sticky top-0 bg-black z-10">
         <h1 class="text-4xl font-bold text-center mb-4">Modern Wallpaper Gallery</h1>
         <div class="flex justify-center">
             <input type="text" id="search-input" placeholder="Search wallpapers..." class="w-full max-w-md px-4 py-2 rounded-lg bg-gray-800 text-white">
@@ -19,10 +19,13 @@
         <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Wallpapers will be dynamically inserted here -->
         </div>
+        <div id="loading-trigger" class="text-center py-4">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-500"></div>
+        </div>
     </main>
 
     <!-- Modal for wallpaper details -->
-    <div id="wallpaper-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+    <div id="wallpaper-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-50">
         <div class="bg-gray-900 p-8 rounded-lg max-w-3xl w-full">
             <img id="modal-image" src="" alt="Wallpaper" class="w-full h-auto mb-4">
             <div class="flex justify-between">

@@ -8,19 +8,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const searchInput = document.getElementById('search-input');
 
     let currentWallpaper = null;
+    let allWallpapers = [];
+    let currentPage = 1;
+    const wallpapersPerPage = 20;
 
     function fetchWallpapers(searchQuery = '') {
         axios.get(`/api/wallpapers?search=${searchQuery}`)
             .then(response => {
-                const wallpapers = response.data.data;
-                displayWallpapers(wallpapers);
+                allWallpapers = Object.entries(response.data.data);
+                currentPage = 1;
+                wallpaperGrid.innerHTML = '';
+                loadMoreWallpapers();
             })
             .catch(error => console.error('Error fetching wallpapers:', error));
     }
 
-    function displayWallpapers(wallpapers) {
-        wallpaperGrid.innerHTML = '';
-        Object.entries(wallpapers).forEach(([id, wallpaper]) => {
+    function loadMoreWallpapers() {
+        const startIndex = (currentPage - 1) * wallpapersPerPage;
+        const endIndex = startIndex + wallpapersPerPage;
+        const wallpapersToLoad = allWallpapers.slice(startIndex, endIndex);
+
+        wallpapersToLoad.forEach(([id, wallpaper]) => {
             const wallpaperItem = document.createElement('div');
             wallpaperItem.className = 'wallpaper-item cursor-pointer';
             wallpaperItem.innerHTML = `
@@ -29,6 +37,12 @@ document.addEventListener('DOMContentLoaded', () => {
             wallpaperItem.addEventListener('click', () => openModal(wallpaper));
             wallpaperGrid.appendChild(wallpaperItem);
         });
+
+        currentPage++;
+
+        if (endIndex >= allWallpapers.length) {
+            observer.unobserve(loadingTrigger);
+        }
     }
 
     function openModal(wallpaper) {
@@ -57,6 +71,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const searchQuery = e.target.value.trim();
         fetchWallpapers(searchQuery);
     });
+
+    // Create a loading trigger element
+    const loadingTrigger = document.createElement('div');
+    loadingTrigger.id = 'loading-trigger';
+    document.body.appendChild(loadingTrigger);
+
+    // Set up Intersection Observer
+    const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+            loadMoreWallpapers();
+        }
+    }, { threshold: 1.0 });
+
+    observer.observe(loadingTrigger);
 
     // Initial wallpaper fetch
     fetchWallpapers();
