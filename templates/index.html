@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Wallpaper Gallery</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-black text-white">
+    <header class="container mx-auto py-8">
+        <h1 class="text-4xl font-bold text-center">Modern Wallpaper Gallery</h1>
+    </header>
+
+    <main class="container mx-auto px-4">
+        <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Wallpapers will be dynamically inserted here -->
+        </div>
+    </main>
+
+    <!-- Modal for wallpaper details -->
+    <div id="wallpaper-modal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-gray-900 p-8 rounded-lg max-w-3xl w-full">
+            <img id="modal-image" src="" alt="Wallpaper" class="w-full h-auto mb-4">
+            <div class="flex justify-between">
+                <button id="download-hd" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Download HD
+                </button>
+                <button id="download-sd" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    Download SD
+                </button>
+                <button id="close-modal" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
