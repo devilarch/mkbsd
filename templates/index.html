@@ -9,7 +9,12 @@
 </head>
 <body class="bg-black text-white">
     <header class="container mx-auto py-8 sticky top-0 bg-black z-10">
-        <h1 class="text-4xl font-bold text-center mb-4">Modern Wallpaper Gallery</h1>
+        <div class="flex justify-between items-center mb-4">
+            <h1 class="text-4xl font-bold">Modern Wallpaper Gallery</h1>
+            <button id="theme-toggle" class="px-4 py-2 rounded-lg bg-gray-800 text-white">
+                Toggle Theme
+            </button>
+        </div>
         <div class="flex justify-center">
             <input type="text" id="search-input" placeholder="Search wallpapers..." class="w-full max-w-md px-4 py-2 rounded-lg bg-gray-800 text-white">
         </div>

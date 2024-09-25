@@ -6,11 +6,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadSD = document.getElementById('download-sd');
     const closeModal = document.getElementById('close-modal');
     const searchInput = document.getElementById('search-input');
+    const themeToggle = document.getElementById('theme-toggle');
 
     let currentWallpaper = null;
     let allWallpapers = [];
     let currentPage = 1;
     const wallpapersPerPage = 20;
+
+    // Theme switching functionality
+    function setTheme(theme) {
+        document.body.classList.remove('light-mode', 'dark-mode');
+        document.body.classList.add(theme + '-mode');
+        localStorage.setItem('theme', theme);
+    }
+
+    function toggleTheme() {
+        const currentTheme = localStorage.getItem('theme') || 'dark';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+    }
+
+    // Set initial theme
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    setTheme(savedTheme);
+
+    themeToggle.addEventListener('click', toggleTheme);
 
     function fetchWallpapers(searchQuery = '') {
         axios.get(`/api/wallpapers?search=${searchQuery}`)
