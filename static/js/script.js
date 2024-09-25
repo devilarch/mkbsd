@@ -7,11 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeModal = document.getElementById('close-modal');
     const searchInput = document.getElementById('search-input');
     const themeToggle = document.getElementById('theme-toggle');
+    const loadingTrigger = document.getElementById('loading-trigger');
 
     let currentWallpaper = null;
     let allWallpapers = [];
     let currentPage = 1;
-    const wallpapersPerPage = 20;
+    const wallpapersPerPage = 10; // Reduced batch size for testing
 
     // Theme switching functionality
     function setTheme(theme) {
@@ -33,8 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     themeToggle.addEventListener('click', toggleTheme);
 
     function fetchWallpapers(searchQuery = '') {
+        console.log('Fetching wallpapers with search query:', searchQuery);
         axios.get(`/api/wallpapers?search=${searchQuery}`)
             .then(response => {
+                console.log('API response:', response.data);
                 allWallpapers = Object.entries(response.data.data);
                 currentPage = 1;
                 wallpaperGrid.innerHTML = '';
@@ -44,9 +47,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadMoreWallpapers() {
+        console.log('Loading more wallpapers. Current page:', currentPage);
         const startIndex = (currentPage - 1) * wallpapersPerPage;
         const endIndex = startIndex + wallpapersPerPage;
         const wallpapersToLoad = allWallpapers.slice(startIndex, endIndex);
+
+        console.log('Wallpapers to load:', wallpapersToLoad.length);
 
         wallpapersToLoad.forEach(([id, wallpaper]) => {
             const wallpaperItem = document.createElement('div');
@@ -61,7 +67,10 @@ document.addEventListener('DOMContentLoaded', () => {
         currentPage++;
 
         if (endIndex >= allWallpapers.length) {
+            console.log('All wallpapers loaded. Unobserving loading trigger.');
             observer.unobserve(loadingTrigger);
+        } else {
+            console.log('More wallpapers available. Keeping observer active.');
         }
     }
 
@@ -92,20 +101,19 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchWallpapers(searchQuery);
     });
 
-    // Create a loading trigger element
-    const loadingTrigger = document.createElement('div');
-    loadingTrigger.id = 'loading-trigger';
-    document.body.appendChild(loadingTrigger);
-
     // Set up Intersection Observer
     const observer = new IntersectionObserver((entries) => {
+        console.log('Intersection Observer triggered');
         if (entries[0].isIntersecting) {
+            console.log('Loading trigger is intersecting. Loading more wallpapers.');
             loadMoreWallpapers();
         }
-    }, { threshold: 1.0 });
+    }, { threshold: 0.1 }); // Reduced threshold for earlier triggering
 
+    console.log('Setting up Intersection Observer');
     observer.observe(loadingTrigger);
 
     // Initial wallpaper fetch
+    console.log('Initiating initial wallpaper fetch');
     fetchWallpapers();
 });
