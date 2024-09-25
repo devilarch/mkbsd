@@ -13,3 +13,25 @@ body {
 #wallpaper-modal {
     backdrop-filter: blur(5px);
 }
+
+#wallpaper-modal .bg-gray-900 {
+    max-height: 90vh;
+}
+
+#wallpaper-modal .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: #4a5568 #2d3748;
+}
+
+#wallpaper-modal .overflow-y-auto::-webkit-scrollbar {
+    width: 8px;
+}
+
+#wallpaper-modal .overflow-y-auto::-webkit-scrollbar-track {
+    background: #2d3748;
+}
+
+#wallpaper-modal .overflow-y-auto::-webkit-scrollbar-thumb {
+    background-color: #4a5568;
+    border-radius: 4px;
+}

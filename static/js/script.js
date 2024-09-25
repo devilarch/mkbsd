@@ -56,10 +56,12 @@ document.addEventListener('DOMContentLoaded', () => {
         currentWallpaper = wallpaper;
         modalImage.src = wallpaper.s || wallpaper.wfs;
         modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling on the background
     }
 
     closeModal.addEventListener('click', () => {
         modal.classList.add('hidden');
+        document.body.style.overflow = ''; // Re-enable scrolling on the background
     });
 
     downloadHD.addEventListener('click', () => {
