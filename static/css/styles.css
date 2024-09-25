@@ -1,15 +1,5 @@
 body {
-    transition: background-color 0.3s, color 0.3s;
-}
-
-body.light-mode {
-    background-color: #f0f0f0;
-    color: #333;
-}
-
-body.dark-mode {
     background-color: #121212;
-    color: #fff;
 }
 
 .wallpaper-item {
@@ -22,36 +12,4 @@ body.dark-mode {
 
 #wallpaper-modal {
     backdrop-filter: blur(5px);
-}
-
-.light-mode #wallpaper-modal {
-    background-color: rgba(255, 255, 255, 0.75);
-}
-
-.dark-mode #wallpaper-modal {
-    background-color: rgba(0, 0, 0, 0.75);
-}
-
-.light-mode .bg-gray-900 {
-    background-color: #f0f0f0;
-}
-
-.dark-mode .bg-gray-900 {
-    background-color: #1a1a1a;
-}
-
-.light-mode .text-white {
-    color: #333;
-}
-
-.dark-mode .text-white {
-    color: #fff;
-}
-
-.light-mode .bg-gray-800 {
-    background-color: #e0e0e0;
-}
-
-.dark-mode .bg-gray-800 {
-    background-color: #2a2a2a;
 }

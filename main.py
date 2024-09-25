@@ -14,17 +14,13 @@ def index():
 @app.route('/api/wallpapers')
 def get_wallpapers():
     search_query = request.args.get('search', '').lower()
-
     filtered_wallpapers = {}
 
     for id, wallpaper in wallpaper_data['data'].items():
         if search_query in id.lower():
             filtered_wallpapers[id] = wallpaper
 
-    return jsonify({
-        "data": filtered_wallpapers,
-        "total": len(filtered_wallpapers)
-    })
+    return jsonify({"data": filtered_wallpapers})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

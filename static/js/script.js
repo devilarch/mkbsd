@@ -6,45 +6,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadSD = document.getElementById('download-sd');
     const closeModal = document.getElementById('close-modal');
     const searchInput = document.getElementById('search-input');
-    const themeToggle = document.getElementById('theme-toggle');
 
     let currentWallpaper = null;
-
-    // Theme switching functionality
-    function setTheme(theme) {
-        document.body.classList.remove('light-mode', 'dark-mode');
-        document.body.classList.add(theme + '-mode');
-        localStorage.setItem('theme', theme);
-    }
-
-    function toggleTheme() {
-        const currentTheme = localStorage.getItem('theme') || 'dark';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
-    }
-
-    // Set initial theme
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setTheme(savedTheme);
-
-    themeToggle.addEventListener('click', toggleTheme);
 
     function fetchWallpapers(searchQuery = '') {
         axios.get(`/api/wallpapers?search=${searchQuery}`)
             .then(response => {
                 const wallpapers = response.data.data;
-                wallpaperGrid.innerHTML = '';
-                Object.entries(wallpapers).forEach(([id, wallpaper]) => {
-                    const wallpaperItem = document.createElement('div');
-                    wallpaperItem.className = 'wallpaper-item cursor-pointer';
-                    wallpaperItem.innerHTML = `
-                        <img src="${wallpaper.s || wallpaper.wfs}" alt="Wallpaper ${id}" class="w-full h-auto rounded-lg shadow-lg">
-                    `;
-                    wallpaperItem.addEventListener('click', () => openModal(wallpaper));
-                    wallpaperGrid.appendChild(wallpaperItem);
-                });
+                displayWallpapers(wallpapers);
             })
             .catch(error => console.error('Error fetching wallpapers:', error));
+    }
+
+    function displayWallpapers(wallpapers) {
+        wallpaperGrid.innerHTML = '';
+        Object.entries(wallpapers).forEach(([id, wallpaper]) => {
+            const wallpaperItem = document.createElement('div');
+            wallpaperItem.className = 'wallpaper-item cursor-pointer';
+            wallpaperItem.innerHTML = `
+                <img src="${wallpaper.s || wallpaper.wfs}" alt="Wallpaper ${id}" class="w-full h-auto rounded-lg shadow-lg">
+            `;
+            wallpaperItem.addEventListener('click', () => openModal(wallpaper));
+            wallpaperGrid.appendChild(wallpaperItem);
+        });
     }
 
     function openModal(wallpaper) {
