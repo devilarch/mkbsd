@@ -5,16 +5,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadHD = document.getElementById('download-hd');
     const downloadSD = document.getElementById('download-sd');
     const closeModal = document.getElementById('close-modal');
+    const searchInput = document.getElementById('search-input');
 
     let currentWallpaper = null;
 
-    // Fetch wallpapers from the API
-    axios.get('/api/wallpapers')
-        .then(response => {
-            const wallpapers = response.data.data;
-            displayWallpapers(wallpapers);
-        })
-        .catch(error => console.error('Error fetching wallpapers:', error));
+    function fetchWallpapers(searchQuery = '') {
+        axios.get(`/api/wallpapers?search=${searchQuery}`)
+            .then(response => {
+                const wallpapers = response.data.data;
+                displayWallpapers(wallpapers);
+            })
+            .catch(error => console.error('Error fetching wallpapers:', error));
+    }
 
     function displayWallpapers(wallpapers) {
         wallpaperGrid.innerHTML = '';
@@ -50,4 +52,12 @@ document.addEventListener('DOMContentLoaded', () => {
             window.open(currentWallpaper.dsd, '_blank');
         }
     });
+
+    searchInput.addEventListener('input', (e) => {
+        const searchQuery = e.target.value.trim();
+        fetchWallpapers(searchQuery);
+    });
+
+    // Initial wallpaper fetch
+    fetchWallpapers();
 });
