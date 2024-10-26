@@ -5,7 +5,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const downloadHD = document.getElementById('download-hd');
     const downloadSD = document.getElementById('download-sd');
     const closeModal = document.getElementById('close-modal');
-    const searchInput = document.getElementById('search-input');
 
     let currentWallpaper = null;
     let currentPage = 1;
@@ -45,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const wallpaperItem = document.createElement('div');
             wallpaperItem.className = 'wallpaper-item cursor-pointer';
             wallpaperItem.innerHTML = `
-                <img src="${wallpaper.s || wallpaper.wfs}" alt="Wallpaper ${id}" class="w-full h-auto rounded-lg shadow-lg">
+                <img src="${wallpaper.dsd || wallpaper.dhd}" alt="Wallpaper ${id}" class="w-full h-auto rounded-lg shadow-lg">
             `;
             wallpaperItem.addEventListener('click', () => openModal(wallpaper));
             wallpaperGrid.appendChild(wallpaperItem);
@@ -54,17 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openModal(wallpaper) {
         currentWallpaper = wallpaper;
-        modalImage.src = wallpaper.s || wallpaper.wfs;
+        modalImage.src = wallpaper.dsd || wallpaper.dhd;
         modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
         updateDownloadButtons();
     }
 
     function updateDownloadButtons() {
-        downloadHD.disabled = !currentWallpaper.dhd;
-        downloadSD.disabled = !currentWallpaper.dsd;
-        downloadHD.classList.toggle('opacity-50', !currentWallpaper.dhd);
-        downloadSD.classList.toggle('opacity-50', !currentWallpaper.dsd);
+        downloadHD.disabled = !(currentWallpaper.dhd);
+        downloadSD.disabled = !(currentWallpaper.dsd);
+        downloadHD.classList.toggle('opacity-50', !(currentWallpaper.dhd));
+        downloadSD.classList.toggle('opacity-50', !(currentWallpaper.dsd));
     }
 
     closeModal.addEventListener('click', () => {
@@ -132,12 +131,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     downloadSD.addEventListener('click', () => {
         handleDownload(currentWallpaper.dsd, 'SD');
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        searchQuery = e.target.value.trim();
-        currentPage = 1;
-        fetchWallpapers(currentPage);
     });
 
     // Infinite scroll
