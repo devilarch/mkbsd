@@ -13,7 +13,7 @@
     </header>
 
     <main class="container mx-auto px-4">
-        <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="wallpaper-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <!-- Wallpapers will be dynamically inserted here -->
         </div>
     </main>
@@ -23,6 +23,7 @@
         <div class="bg-gray-900 p-4 rounded-lg max-w-xl w-full max-h-screen flex flex-col">
             <div class="overflow-y-auto flex-grow mb-4">
                 <img id="modal-image" src="" alt="Wallpaper" class="w-full h-auto mb-4">
+                <p id="download-count" class="text-center text-sm text-gray-400 mt-2">Downloads: <span>0</span></p>
             </div>
             <div class="flex justify-between">
                 <button id="download-hd" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
@@ -42,3 +43,4 @@
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
+

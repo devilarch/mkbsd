@@ -2,12 +2,28 @@ body {
     background-color: #121212;
 }
 
+.wallpaper-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    padding: 10px;
+}
+
 .wallpaper-item {
     transition: transform 0.3s ease;
+    overflow: hidden;
+    border-radius: 8px;
 }
 
 .wallpaper-item:hover {
     transform: scale(1.05);
+}
+
+.wallpaper-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
 #wallpaper-modal {
@@ -35,3 +51,4 @@ body {
     background-color: #4a5568;
     border-radius: 4px;
 }
+
